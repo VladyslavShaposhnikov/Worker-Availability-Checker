@@ -1,0 +1,58 @@
+GetPath.cs
+
+# Build results
+bin/
+obj/
+
+# Visual Studio cache files
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Rider / JetBrains IDEs
+.idea/
+*.sln.iml
+
+# Dotnet CLI artifacts
+*.log
+*.vspscc
+*.vssscc
+*.dbmdl
+
+# User-specific files
+*.userprefs
+
+# ASP.NET (if added later)
+wwwroot/
+appsettings.Development.json
+
+# Temporary files
+*.tmp
+*.bak
+*.old
+*.orig
+
+# Excel package cache or temp files (optional, if used)
+~$*
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Ignore Excel test files if used during dev
+*.xlsx
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+*.nuspec
+
+# Logs
+*.log
+
+# IDE-specific
+ReSharper/
