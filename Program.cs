@@ -41,7 +41,19 @@ class Program
         shapik.StartColumn = 25;
         shapik.Dyspo = new Dictionary<DateOnly, int[]>();
         
+        Worker vm1 = new Worker(){Name = "Vm1", WorkerId = 701258, StartColumn = 29, Dyspo = new Dictionary<DateOnly, int[]>()};
+        
+        Worker vm2 = new Worker(){Name = "Vm2", WorkerId = 701259, StartColumn = 33, Dyspo = new Dictionary<DateOnly, int[]>()};
+        
+        Worker manager1 = new Worker(){Name = "Manager1", WorkerId = 701260, StartColumn = 37, Dyspo = new Dictionary<DateOnly, int[]>()};
+        
+        Worker manager2 = new Worker(){Name = "Manager2", WorkerId = 701261, StartColumn = 41, Dyspo = new Dictionary<DateOnly, int[]>()};
+        
         List<Worker> workers = new List<Worker>() {me, wladek, shaposhnikov, shapik, vladyslav, vlad};
+        
+        List<Worker> managers = new List<Worker>() {vm1, vm2, manager1, manager2};
+        
+        List<Worker> allWorkers = new List<Worker>(){me, wladek, shaposhnikov, shapik, vladyslav, vlad, vm1, vm2, manager1, manager2};
         
         ExcelPackage.License.SetNonCommercialOrganization("My Noncommercial organization");
         using(var package = new ExcelPackage(new FileInfo(GetPath.Path)))
@@ -60,23 +72,54 @@ class Program
                 return;
             }
 
-            foreach (var worker in workers)
-            {
-                int[] from = ExcelHelpers.SaveToArray(worker.StartRow, worker.StartColumn, daysInMonth, worksheet);
-            
-                int[] untill = ExcelHelpers.SaveToArray(worker.StartRow, worker.StartColumn + 2, daysInMonth, worksheet);
-                
-                for (int i = 0; i < daysInMonth; i++)
-                {
-                    string day = $"4/{i + 1}/2025";
-                    int[] res = Enumerable.Range(from[i], untill[i]).ToArray();
-                    worker.Dyspo[DateOnly.Parse(day)] = res;
-                }
-            }
+            ExcelHelpers.ParseAvailability(workers, worksheet, daysInMonth);
+            ExcelHelpers.ParseAvailability(managers, worksheet, daysInMonth);
         }
         
-        ExcelHelpers.IsAvailable(DateOnly.Parse("4/12/2025"), workers, 9, 16);
+        //ExcelHelpers.IsAvailable(DateOnly.Parse("4/12/2025"), workers, 9, 16);
 
-        ExcelHelpers.IsAvailableForAllDays(workers, 30, 9, 16);
+        //ExcelHelpers.IsAvailableForAllDays(workers, 30, 9, 16);
+        
+        //ExcelHelpers.IsAvailableForAllDays(allWorkers, 30, 9, 16);
+        
+        // TimeManager tm = new TimeManager(9, 22);
+        //
+        // ExcelHelpers.IsAvailableWithTimeManaget(DateOnly.Parse("4/12/2025"), workers, 9, 16, tm);
+        // Console.WriteLine("---------------------------------------------------");
+        // tm.DisplayWorkingHours();
+
+        Schedule s = new Schedule(30);
+
+        foreach (var key in s.CurrentMonth.Keys)
+        {
+            if (key.DayOfWeek.ToString() == "Monday" || key.DayOfWeek.ToString() == "Thursday")
+            {
+                ExcelHelpers.IsAvailableWithTimeManaget(key, allWorkers, 6, 14, s.CurrentMonth[key]);
+            }
+            else
+            {
+                ExcelHelpers.IsAvailableWithTimeManaget(key, allWorkers, 9, 15, s.CurrentMonth[key]);
+            }
+            if (key.DayOfWeek.ToString() == "Monday" || key.DayOfWeek.ToString() == "Thursday")
+            {
+                ExcelHelpers.IsAvailableWithTimeManaget(key, allWorkers, 14, 22, s.CurrentMonth[key]);
+            }
+            else
+            {
+                ExcelHelpers.IsAvailableWithTimeManaget(key, allWorkers, 15, 22, s.CurrentMonth[key]);
+            }
+        }
+        //
+        // ExcelHelpers.IsAvailableForAllDaysWithTimeManager(allWorkers, 30, 9, 15, s);
+        // ExcelHelpers.IsAvailableForAllDaysWithTimeManager(allWorkers, 30, 15, 22, s);
+
+        foreach (var item in s.CurrentMonth.Keys)
+        {
+            Console.WriteLine($"Date: {item}");
+            s.CurrentMonth[item].DisplayWorkingHours();
+            Console.WriteLine(s.CurrentMonth[item].Date);
+            Console.WriteLine(item.DayOfWeek.ToString());
+            Console.WriteLine("---------------------------------------");
+        }
     }
 }

@@ -11,7 +11,8 @@ public static class ExcelHelpers
             string date = $"4/{i}/2025";
             Console.WriteLine($"Day: {date}");
             IsAvailable(DateOnly.Parse(date), workers, from, to);
-            Console.WriteLine("--------------------------------------------------------");;
+            Console.WriteLine("--------------------------------------------------------");
+            
         }
     }
     public static void IsAvailable(DateOnly date, List<Worker> workers, int from, int to)
@@ -30,10 +31,6 @@ public static class ExcelHelpers
             {
                 Console.WriteLine($"{person.Name} is available for {date}. All available hourse at this day: {string.Join(", ", person.Dyspo[date])}");
             }
-            // else
-            // {
-            //     Console.WriteLine($"{person.name} is not available for {date}");
-            // }
         }
     }
     public static int[] SaveToArray(int startRow, int column, int daysInMonth, ExcelWorksheet worksheet)
@@ -45,5 +42,62 @@ public static class ExcelHelpers
             from[row - startRow] = int.Parse(value);
         }
         return from;
+    }
+
+    public static void ParseAvailability(List<Worker> workers, ExcelWorksheet worksheet, int daysInMonth)
+    {
+        foreach (var worker in workers)
+        {
+            int[] from = SaveToArray(worker.StartRow, worker.StartColumn, daysInMonth, worksheet);
+            
+            int[] untill = SaveToArray(worker.StartRow, worker.StartColumn + 2, daysInMonth, worksheet);
+                
+            for (int i = 0; i < daysInMonth; i++)
+            {
+                string day = $"4/{i + 1}/2025";
+                int[] res = Enumerable.Range(from[i], untill[i]).ToArray();
+                worker.Dyspo[DateOnly.Parse(day)] = res;
+            }
+        }
+    }
+    
+    public static void IsAvailableWithTimeManaget(DateOnly date, List<Worker> workers, int from, int to, TimeManager timeManager)
+    {
+        foreach (var person in workers)
+        {
+            timeManager.Date = date;
+            if (!person.Dyspo.ContainsKey(date))
+            {
+                continue;
+            }
+            int[] ava = person.Dyspo[date];
+            
+            int[] toCheck = Enumerable.Range(from, to - from).ToArray();
+
+            if (toCheck.All(x => ava.Contains(x)))
+            {
+                Console.WriteLine($"{person.Name} is available for {date}. All available hourse at this day: {string.Join(", ", person.Dyspo[date])}");
+                foreach (var i in toCheck)
+                {
+                    if (!timeManager.IsPropertLenght(i))
+                    {
+                        timeManager.AddWorker(person, i);
+                    }
+                }
+            }
+        }
+    }
+    
+    public static void IsAvailableForAllDaysWithTimeManager(List<Worker> workers, int daysInMonth, int from, int to, Schedule schedule)
+    {
+        
+        for (int i = 1; i <= daysInMonth; i++)
+        {
+            string date = $"4/{i}/2025";
+            TimeManager tm = schedule.CurrentMonth[DateOnly.Parse(date)];
+            Console.WriteLine($"Day: {date}");
+            IsAvailableWithTimeManaget(DateOnly.Parse(date), workers, from, to, tm);
+            Console.WriteLine("--------------------------------------------------------");
+        }
     }
 }
