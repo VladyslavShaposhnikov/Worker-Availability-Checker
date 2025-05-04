@@ -6,6 +6,7 @@ public class Worker
     public int WorkerId { get; set; }
     public int StartRow { get; set; } = 4; // default to 4 if not set
     public int StartColumn { get; set; }
+    public int Priority { get; set; } = 3;
 
     public Dictionary<DateOnly, int[]> Dyspo { get; set; } = new();
 

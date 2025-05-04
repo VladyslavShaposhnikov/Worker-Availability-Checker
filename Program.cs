@@ -41,13 +41,13 @@ class Program
         shapik.StartColumn = 25;
         shapik.Dyspo = new Dictionary<DateOnly, int[]>();
         
-        Worker vm1 = new Worker(){Name = "Vm1", WorkerId = 701258, StartColumn = 29, Dyspo = new Dictionary<DateOnly, int[]>()};
+        Worker vm1 = new Worker(){Name = "Vm1", Priority = 2, WorkerId = 701258, StartColumn = 29, Dyspo = new Dictionary<DateOnly, int[]>()};
         
-        Worker vm2 = new Worker(){Name = "Vm2", WorkerId = 701259, StartColumn = 33, Dyspo = new Dictionary<DateOnly, int[]>()};
+        Worker vm2 = new Worker(){Name = "Vm2",Priority = 2, WorkerId = 701259, StartColumn = 33, Dyspo = new Dictionary<DateOnly, int[]>()};
         
-        Worker manager1 = new Worker(){Name = "Manager1", WorkerId = 701260, StartColumn = 37, Dyspo = new Dictionary<DateOnly, int[]>()};
+        Worker manager1 = new Worker(){Name = "Manager1",Priority = 1, WorkerId = 701260, StartColumn = 37, Dyspo = new Dictionary<DateOnly, int[]>()};
         
-        Worker manager2 = new Worker(){Name = "Manager2", WorkerId = 701261, StartColumn = 41, Dyspo = new Dictionary<DateOnly, int[]>()};
+        Worker manager2 = new Worker(){Name = "Manager2",Priority = 1, WorkerId = 701261, StartColumn = 41, Dyspo = new Dictionary<DateOnly, int[]>()};
         
         List<Worker> workers = new List<Worker>() {me, wladek, shaposhnikov, shapik, vladyslav, vlad};
         
@@ -94,19 +94,19 @@ class Program
         {
             if (key.DayOfWeek.ToString() == "Monday" || key.DayOfWeek.ToString() == "Thursday")
             {
-                ExcelHelpers.IsAvailableWithTimeManaget(key, allWorkers, 6, 14, s.CurrentMonth[key]);
+                ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 6, 14, s.CurrentMonth[key]);
             }
             else
             {
-                ExcelHelpers.IsAvailableWithTimeManaget(key, allWorkers, 9, 15, s.CurrentMonth[key]);
+                ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 9, 15, s.CurrentMonth[key]);
             }
             if (key.DayOfWeek.ToString() == "Monday" || key.DayOfWeek.ToString() == "Thursday")
             {
-                ExcelHelpers.IsAvailableWithTimeManaget(key, allWorkers, 14, 22, s.CurrentMonth[key]);
+                ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 14, 22, s.CurrentMonth[key]);
             }
             else
             {
-                ExcelHelpers.IsAvailableWithTimeManaget(key, allWorkers, 15, 22, s.CurrentMonth[key]);
+                ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 15, 22, s.CurrentMonth[key]);
             }
         }
         //
@@ -121,5 +121,10 @@ class Program
             Console.WriteLine(item.DayOfWeek.ToString());
             Console.WriteLine("---------------------------------------");
         }
+        
+        // foreach (var item in s.CurrentMonth.Keys)
+        // {
+        //     s.CurrentMonth[item].GetNotSetHours();
+        // }
     }
 }

@@ -2,9 +2,10 @@ namespace practice;
 
 public class TimeManager
 {
-    public TimeManager(int from, int to)
+    public TimeManager(DateOnly dateOnly, int from, int to)
     {
         InitWorkingHours(from, to);
+        SetDefaultRequiredWorkers(dateOnly.DayOfWeek);
     }
     
     public DateOnly Date { get; set; } // what day is it (4-th of May)
@@ -16,7 +17,6 @@ public class TimeManager
         for (int i = from; i < to; i++)
         {
             WorkingHours.Add(i, new List<Worker>());
-            RequiredWorkers.Add(i, 3); // value "3" is hardcoded
         }
     }
 
@@ -25,6 +25,61 @@ public class TimeManager
         WorkingHours[hour].Add(worker);
     }
 
+    public void SetDefaultRequiredWorkers(DayOfWeek dayOfWeek)
+    {
+        switch (dayOfWeek)
+        {
+            case DayOfWeek.Monday:
+                MondayThursdayLoop();
+                break;
+            case DayOfWeek.Tuesday:
+                TuesdayWednesdayLoop();
+                break;
+            case DayOfWeek.Wednesday:
+                TuesdayWednesdayLoop();
+                break;
+            case DayOfWeek.Thursday:
+                MondayThursdayLoop();
+                break;
+            case DayOfWeek.Friday:
+                WeekendsLoop();
+                break;
+            case DayOfWeek.Saturday:
+                WeekendsLoop();
+                break;
+            case DayOfWeek.Sunday:
+                WeekendsLoop();
+                break;
+        }
+    }
+
+    private void MondayThursdayLoop()
+    {
+        for (int i = 6; i <= 12; i++)
+        {
+            RequiredWorkers.Add(i, 4);
+        }
+        for (int i = 13; i <= 22; i++)
+        {
+            RequiredWorkers.Add(i, 3);
+        }
+    }
+    
+    private void TuesdayWednesdayLoop()
+    {
+        for (int i = 9; i <= 22; i++)
+        {
+            RequiredWorkers.Add(i, 3);
+        }
+    }
+
+    private void WeekendsLoop()
+    {
+        for (int i = 9; i <= 22; i++)
+        {
+            RequiredWorkers.Add(i, 4);
+        }
+    }
     public bool IsPropertLenght(int hour)
     {
         if (WorkingHours.ContainsKey(hour) && RequiredWorkers.ContainsKey(hour))
@@ -61,6 +116,20 @@ public class TimeManager
                 Console.WriteLine($"\t{worker.WorkerId}");
             }
             Console.WriteLine();
+        }
+    }
+    
+    public void GetNotSetHours()
+    {
+        foreach (var hour in WorkingHours.Keys)
+        {
+            if (WorkingHours[hour].Count != RequiredWorkers[hour])
+            {
+                Console.WriteLine($"{Date}, {Date.DayOfWeek}, Hour: {hour}");
+                Console.WriteLine($"Workers: {WorkingHours[hour].Count}. Required workers count {RequiredWorkers[hour]}");
+                Console.WriteLine("--------------------------------------------------------------------------------------");
+            }
+
         }
     }
 }

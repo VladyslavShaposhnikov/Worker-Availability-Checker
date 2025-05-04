@@ -100,4 +100,67 @@ public static class ExcelHelpers
             Console.WriteLine("--------------------------------------------------------");
         }
     }
+    
+    public static void IsAvailableWithTimeManagetAndTempDict(DateOnly date, List<Worker> workers, int from, int to, TimeManager timeManager)
+    {
+        Dictionary<int, List<Worker>> tempDict = new Dictionary<int, List<Worker>>();
+        
+        foreach (var person in workers)
+        {
+            timeManager.Date = date;
+            if (!person.Dyspo.ContainsKey(date))
+            {
+                continue;
+            }
+            int[] ava = person.Dyspo[date];
+            
+            int[] toCheck = Enumerable.Range(from, to - from).ToArray();
+
+            if (toCheck.All(x => ava.Contains(x)))
+            {
+                Console.WriteLine($"{person.Name} is available for {date}. All available hourse at this day: {string.Join(", ", person.Dyspo[date])}");
+                foreach (var i in toCheck)
+                {
+                    if (!tempDict.ContainsKey(i))
+                    {
+                        tempDict.Add(i, new List<Worker>());
+                    }
+                    tempDict[i].Add(person);
+                }
+            }
+        }
+
+        foreach (var key in tempDict.Keys)
+        {
+            List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).ToList();
+            List<Worker> prior2 = tempDict[key].Where(x => x.Priority == 2).ToList();
+            List<Worker> prior3 = tempDict[key].Where(x => x.Priority == 3).ToList();
+            
+            
+            if (prior1.Count != 0)
+            {
+                if (!timeManager.IsPropertLenght(key))
+                {
+                    timeManager.AddWorker(prior1[0], key);
+                }
+            }
+            if (prior2.Count != 0)
+            {
+                if (!timeManager.IsPropertLenght(key))
+                {
+                    timeManager.AddWorker(prior2[0], key);
+                }
+            }
+            if (prior3.Count != 0)
+            {
+                foreach (var i in prior3)
+                {
+                    if (!timeManager.IsPropertLenght(key))
+                    {
+                        timeManager.AddWorker(i, key);
+                    }
+                }
+            }
+        }
+    }
 }
