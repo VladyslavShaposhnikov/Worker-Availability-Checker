@@ -121,6 +121,11 @@ class Program
             Console.WriteLine(item.DayOfWeek.ToString());
             Console.WriteLine("---------------------------------------");
         }
+
+        foreach (var worker in allWorkers)
+        {
+            Console.WriteLine($"Name: {worker.Name}, {worker.WorkerId}, Working hours at this month: {worker.HoursAtMonth}");
+        }
         
         // foreach (var item in s.CurrentMonth.Keys)
         // {

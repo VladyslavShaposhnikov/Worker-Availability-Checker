@@ -114,6 +114,7 @@ public class TimeManager
             {
                 Console.WriteLine($"\t{worker.Name}");
                 Console.WriteLine($"\t{worker.WorkerId}");
+                worker.HoursAtMonth++;
             }
             Console.WriteLine();
         }
