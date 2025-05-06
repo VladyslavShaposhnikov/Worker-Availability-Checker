@@ -51,7 +51,7 @@ public static class ExcelHelpers
             int[] from = SaveToArray(worker.StartRow, worker.StartColumn, daysInMonth, worksheet);
             
             int[] untill = SaveToArray(worker.StartRow, worker.StartColumn + 2, daysInMonth, worksheet);
-                
+            
             for (int i = 0; i < daysInMonth; i++)
             {
                 string day = $"4/{i + 1}/2025";
@@ -132,9 +132,9 @@ public static class ExcelHelpers
 
         foreach (var key in tempDict.Keys)
         {
-            List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).ToList();
-            List<Worker> prior2 = tempDict[key].Where(x => x.Priority == 2).ToList();
-            List<Worker> prior3 = tempDict[key].Where(x => x.Priority == 3).ToList();
+            List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).OrderBy(x => x.HoursAtMonth).ToList();
+            List<Worker> prior2 = tempDict[key].Where(x => x.Priority == 2).OrderBy(x => x.HoursAtMonth).ToList();
+            List<Worker> prior3 = tempDict[key].Where(x => x.Priority == 3).OrderBy(x => x.HoursAtMonth).ToList();
             
             
             if (prior1.Count != 0)

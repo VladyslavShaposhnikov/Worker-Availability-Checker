@@ -113,6 +113,34 @@ class Program
         // ExcelHelpers.IsAvailableForAllDaysWithTimeManager(allWorkers, 30, 9, 15, s);
         // ExcelHelpers.IsAvailableForAllDaysWithTimeManager(allWorkers, 30, 15, 22, s);
 
+        using (StreamWriter writer = new StreamWriter("output.txt"))
+        {
+            writer.WriteLine("----------------------------------------------------Plan---------------------------------------------------------------");
+
+            foreach (var item in s.CurrentMonth.Keys)
+            {
+                writer.WriteLine($"Date: {item}");
+                s.CurrentMonth[item].DisplayWorkingHoursToFile(writer);
+                writer.WriteLine(s.CurrentMonth[item].Date);
+                writer.WriteLine(item.DayOfWeek.ToString());
+                writer.WriteLine("---------------------------------------");
+            }
+            
+            writer.WriteLine("----------------------------------------------------Hour Total For Each Worker---------------------------------------------------------------");
+            
+            foreach (var worker in allWorkers)
+            {
+                writer.WriteLine($"Name: {worker.Name}, {worker.WorkerId}, Working hours at this month: {worker.HoursAtMonth}");
+            }
+            
+            writer.WriteLine("-----------------------------------------------GetNotSetHours--------------------------------------------------------------------");
+            
+            foreach (var item in s.CurrentMonth.Keys)
+            {
+                s.CurrentMonth[item].GetNotSetHoursToFile(writer);
+            }
+        }
+        
         foreach (var item in s.CurrentMonth.Keys)
         {
             Console.WriteLine($"Date: {item}");

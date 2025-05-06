@@ -23,6 +23,7 @@ public class TimeManager
     public void AddWorker(Worker worker, int hour)
     {
         WorkingHours[hour].Add(worker);
+        worker.HoursAtMonth++;
     }
 
     public void SetDefaultRequiredWorkers(DayOfWeek dayOfWeek)
@@ -114,9 +115,24 @@ public class TimeManager
             {
                 Console.WriteLine($"\t{worker.Name}");
                 Console.WriteLine($"\t{worker.WorkerId}");
-                worker.HoursAtMonth++;
+                //worker.HoursAtMonth++;
             }
             Console.WriteLine();
+        }
+    }
+    
+    public void DisplayWorkingHoursToFile(StreamWriter writer)
+    {
+        foreach (var hour in WorkingHours.Keys)
+        {
+            writer.WriteLine($"{hour}: {WorkingHours[hour].Count}:");
+            foreach (var worker in WorkingHours[hour])
+            {
+                writer.WriteLine($"\t{worker.Name}");
+                writer.WriteLine($"\t{worker.WorkerId}");
+                //worker.HoursAtMonth++;
+            }
+            writer.WriteLine();
         }
     }
     
@@ -129,6 +145,20 @@ public class TimeManager
                 Console.WriteLine($"{Date}, {Date.DayOfWeek}, Hour: {hour}");
                 Console.WriteLine($"Workers: {WorkingHours[hour].Count}. Required workers count {RequiredWorkers[hour]}");
                 Console.WriteLine("--------------------------------------------------------------------------------------");
+            }
+
+        }
+    }
+    
+    public void GetNotSetHoursToFile(StreamWriter writer)
+    {
+        foreach (var hour in WorkingHours.Keys)
+        {
+            if (WorkingHours[hour].Count != RequiredWorkers[hour])
+            {
+                writer.WriteLine($"{Date}, {Date.DayOfWeek}, Hour: {hour}");
+                writer.WriteLine($"Workers: {WorkingHours[hour].Count}. Required workers count {RequiredWorkers[hour]}");
+                writer.WriteLine("--------------------------------------------------------------------------------------");
             }
 
         }
