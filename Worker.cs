@@ -8,9 +8,23 @@ public class Worker
     public int StartColumn { get; set; }
     public int Priority { get; set; } = 3;
     public Dictionary<DateOnly, int> HoursAtMonth { get; set; } = new();
+    public List<DateOnly> WorkDay { get; set; } = new();
     
     public Dictionary<DateOnly, int[]> Dyspo { get; set; } = new();
 
+    public bool CanWorkToday(DateOnly date) // return false in case worker cant work this day because already has shift today
+    {
+        return !WorkDay.Contains(date);
+    }
+
+    public void MarkAsWorkDay(DateOnly date)
+    {
+        if (WorkDay.Contains(date))
+        {
+            return;
+        }
+        WorkDay.Add(date);
+    }
     public int GetHoursForPrevDay(DateOnly currentDate)
     {
         if (currentDate.Day == 1)

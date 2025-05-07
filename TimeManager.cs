@@ -23,6 +23,7 @@ public class TimeManager
     public void AddWorker(Worker worker, int hour, DateOnly date)
     {
         WorkingHours[hour].Add(worker);
+        worker.MarkAsWorkDay(date); // not nessesory to change it every hour
         if (!worker.HoursAtMonth.ContainsKey(date))
         {
             worker.HoursAtMonth.Add(date, 1);

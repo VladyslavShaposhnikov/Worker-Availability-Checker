@@ -107,7 +107,7 @@ public static class ExcelHelpers
         foreach (var person in workers)
         {
             timeManager.Date = date;
-            if (!person.Dyspo.ContainsKey(date))
+            if (!person.Dyspo.ContainsKey(date) || person.CanWorkToday(date) == false)
             {
                 continue;
             }
