@@ -49,13 +49,13 @@ class Program
         
         Worker manager2 = new Worker(){Name = "Manager2",Priority = 1, WorkerId = 701261, StartColumn = 41, Dyspo = new Dictionary<DateOnly, int[]>()};
         
-        List<Worker> workers = new List<Worker>() {me, wladek, shaposhnikov, shapik, vladyslav, vlad};
-        
-        List<Worker> managers = new List<Worker>() {vm1, vm2, manager1, manager2};
-        
         List<Worker> allWorkers = new List<Worker>(){me, wladek, shaposhnikov, shapik, vladyslav, vlad, vm1, vm2, manager1, manager2};
         
         ExcelPackage.License.SetNonCommercialOrganization("My Noncommercial organization");
+
+        int dim;
+        int m;
+        
         using(var package = new ExcelPackage(new FileInfo(GetPath.Path)))
         {
             if (package.Workbook.Worksheets.Count == 0)
@@ -64,16 +64,23 @@ class Program
                 return;
             }
             
-            var worksheet = package.Workbook.Worksheets[0];
+            var worksheet = package.Workbook.Worksheets[1];
 
             if (!int.TryParse(worksheet.Cells["B3"].Text, out int daysInMonth))
             {
                 Console.WriteLine("Invalid number in cell B3.");
                 return;
             }
+            dim = daysInMonth;
+            
+            if (!int.TryParse(worksheet.Cells["A3"].Text, out int monthNum))
+            {
+                Console.WriteLine("Invalid number in cell A3.");
+                return;
+            }
+            m = monthNum;
 
-            ExcelHelpers.ParseAvailability(workers, worksheet, daysInMonth);
-            ExcelHelpers.ParseAvailability(managers, worksheet, daysInMonth);
+            ExcelHelpers.ParseAvailability(allWorkers, worksheet, dim, m);
         }
         
         //ExcelHelpers.IsAvailable(DateOnly.Parse("4/12/2025"), workers, 9, 16);
@@ -88,7 +95,7 @@ class Program
         // Console.WriteLine("---------------------------------------------------");
         // tm.DisplayWorkingHours();
 
-        Schedule s = new Schedule(30);
+        Schedule s = new Schedule(dim, m);
 
         foreach (var key in s.CurrentMonth.Keys)
         {
@@ -130,7 +137,7 @@ class Program
             
             foreach (var worker in allWorkers)
             {
-                writer.WriteLine($"Name: {worker.Name}, {worker.WorkerId}, Working hours at this month: {worker.HoursAtMonth}");
+                writer.WriteLine($"Name: {worker.Name}, {worker.WorkerId}, Working hours at this month: {worker.HoursAtMonth.Values.Sum()}");
             }
             
             writer.WriteLine("-----------------------------------------------GetNotSetHours--------------------------------------------------------------------");
@@ -152,7 +159,7 @@ class Program
 
         foreach (var worker in allWorkers)
         {
-            Console.WriteLine($"Name: {worker.Name}, {worker.WorkerId}, Working hours at this month: {worker.HoursAtMonth}");
+            Console.WriteLine($"Name: {worker.Name}, {worker.WorkerId}, Working hours at this month: {worker.HoursAtMonth.Values.Sum()}");
         }
         
         // foreach (var item in s.CurrentMonth.Keys)

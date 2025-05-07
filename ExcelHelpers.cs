@@ -44,7 +44,7 @@ public static class ExcelHelpers
         return from;
     }
 
-    public static void ParseAvailability(List<Worker> workers, ExcelWorksheet worksheet, int daysInMonth)
+    public static void ParseAvailability(List<Worker> workers, ExcelWorksheet worksheet, int daysInMonth, int month)
     {
         foreach (var worker in workers)
         {
@@ -54,7 +54,7 @@ public static class ExcelHelpers
             
             for (int i = 0; i < daysInMonth; i++)
             {
-                string day = $"4/{i + 1}/2025";
+                string day = $"{month}/{i + 1}/2025";
                 int[] res = Enumerable.Range(from[i], untill[i]).ToArray();
                 worker.Dyspo[DateOnly.Parse(day)] = res;
             }
@@ -81,7 +81,7 @@ public static class ExcelHelpers
                 {
                     if (!timeManager.IsPropertLenght(i))
                     {
-                        timeManager.AddWorker(person, i);
+                        timeManager.AddWorker(person, i, date);
                     }
                 }
             }
@@ -104,7 +104,6 @@ public static class ExcelHelpers
     public static void IsAvailableWithTimeManagetAndTempDict(DateOnly date, List<Worker> workers, int from, int to, TimeManager timeManager)
     {
         Dictionary<int, List<Worker>> tempDict = new Dictionary<int, List<Worker>>();
-        
         foreach (var person in workers)
         {
             timeManager.Date = date;
@@ -115,7 +114,7 @@ public static class ExcelHelpers
             int[] ava = person.Dyspo[date];
             
             int[] toCheck = Enumerable.Range(from, to - from).ToArray();
-
+            
             if (toCheck.All(x => ava.Contains(x)))
             {
                 Console.WriteLine($"{person.Name} is available for {date}. All available hourse at this day: {string.Join(", ", person.Dyspo[date])}");
@@ -132,23 +131,22 @@ public static class ExcelHelpers
 
         foreach (var key in tempDict.Keys)
         {
-            List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).OrderBy(x => x.HoursAtMonth).ToList();
-            List<Worker> prior2 = tempDict[key].Where(x => x.Priority == 2).OrderBy(x => x.HoursAtMonth).ToList();
-            List<Worker> prior3 = tempDict[key].Where(x => x.Priority == 3).OrderBy(x => x.HoursAtMonth).ToList();
-            
+            List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).OrderBy(x => x.GetHoursForPrevDay(date)).ToList();
+            List<Worker> prior2 = tempDict[key].Where(x => x.Priority == 2).OrderBy(x => x.GetHoursForPrevDay(date)).ToList();
+            List<Worker> prior3 = tempDict[key].Where(x => x.Priority == 3).OrderBy(x => x.GetHoursForPrevDay(date)).ToList(); 
             
             if (prior1.Count != 0)
             {
                 if (!timeManager.IsPropertLenght(key))
                 {
-                    timeManager.AddWorker(prior1[0], key);
+                    timeManager.AddWorker(prior1[0], key, date);
                 }
             }
             if (prior2.Count != 0)
             {
                 if (!timeManager.IsPropertLenght(key))
                 {
-                    timeManager.AddWorker(prior2[0], key);
+                    timeManager.AddWorker(prior2[0], key, date);
                 }
             }
             if (prior3.Count != 0)
@@ -157,7 +155,7 @@ public static class ExcelHelpers
                 {
                     if (!timeManager.IsPropertLenght(key))
                     {
-                        timeManager.AddWorker(i, key);
+                        timeManager.AddWorker(i, key, date);
                     }
                 }
             }

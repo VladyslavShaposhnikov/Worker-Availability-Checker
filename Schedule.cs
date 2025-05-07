@@ -2,11 +2,11 @@ namespace practice;
 
 public class Schedule
 {
-    public Schedule(int daysInMonth)
+    public Schedule(int daysInMonth, int month)
     {
         for (int i = 1; i <= daysInMonth; i++)
         {
-            DateOnly onlyDate = DateOnly.Parse($"4/{i}/2025");
+            DateOnly onlyDate = DateOnly.Parse($"{month}/{i}/2025");
             if (onlyDate.DayOfWeek == DayOfWeek.Monday || onlyDate.DayOfWeek == DayOfWeek.Thursday)
             {
                 CurrentMonth.Add(onlyDate, new TimeManager(onlyDate, 6, 22));

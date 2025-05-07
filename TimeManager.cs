@@ -19,11 +19,15 @@ public class TimeManager
             WorkingHours.Add(i, new List<Worker>());
         }
     }
-
-    public void AddWorker(Worker worker, int hour)
+    
+    public void AddWorker(Worker worker, int hour, DateOnly date)
     {
         WorkingHours[hour].Add(worker);
-        worker.HoursAtMonth++;
+        if (!worker.HoursAtMonth.ContainsKey(date))
+        {
+            worker.HoursAtMonth.Add(date, 1);
+        }
+        worker.HoursAtMonth[date]++;
     }
 
     public void SetDefaultRequiredWorkers(DayOfWeek dayOfWeek)
@@ -115,7 +119,6 @@ public class TimeManager
             {
                 Console.WriteLine($"\t{worker.Name}");
                 Console.WriteLine($"\t{worker.WorkerId}");
-                //worker.HoursAtMonth++;
             }
             Console.WriteLine();
         }
@@ -130,7 +133,6 @@ public class TimeManager
             {
                 writer.WriteLine($"\t{worker.Name}");
                 writer.WriteLine($"\t{worker.WorkerId}");
-                //worker.HoursAtMonth++;
             }
             writer.WriteLine();
         }
