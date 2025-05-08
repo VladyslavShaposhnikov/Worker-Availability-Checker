@@ -84,9 +84,13 @@ class Program
         }
 
         Schedule s = new Schedule(dim, m);
+        
+        // s.CurrentMonth[DateOnly.Parse("06/01/2025")].ChangeRequiredWorkers(9, 10); // to change required workers at certain day at certain hour
 
         foreach (var key in s.CurrentMonth.Keys)
         {
+            // important note: if I am looking for employee for example from 9 to 15 and required workers from 9 to 11 is set to 4 but from 11 to 15
+            // required workers is set to 3, it will find 4 workers from 9 to 11 (if they are available)
             if (key.DayOfWeek.ToString() == "Monday" || key.DayOfWeek.ToString() == "Thursday")
             {
                 ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 6, 14, s.CurrentMonth[key]);
