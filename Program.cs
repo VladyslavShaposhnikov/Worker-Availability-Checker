@@ -114,9 +114,12 @@ class Program
             else
             {
                 ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 15, 22, s.CurrentMonth[key]);
+                // ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 15, 21, s.CurrentMonth[key]); to set workers who can work until 21:00
             }
         }
-        //
+        
+        ExcelHelpers.IsAvailableWithTimeManaget(DateOnly.Parse("06/01/2025"), allWorkers, 15, 21, s.CurrentMonth[DateOnly.Parse("06/01/2025")]);
+        
         // ExcelHelpers.IsAvailableForAllDaysWithTimeManager(allWorkers, 30, 9, 15, s);
         // ExcelHelpers.IsAvailableForAllDaysWithTimeManager(allWorkers, 30, 15, 22, s);
 
@@ -127,6 +130,7 @@ class Program
             foreach (var item in s.CurrentMonth.Keys)
             {
                 writer.WriteLine($"Date: {item}");
+                writer.WriteLine();
                 s.CurrentMonth[item].DisplayWorkingHoursToFile(writer);
                 writer.WriteLine(s.CurrentMonth[item].Date);
                 writer.WriteLine(item.DayOfWeek.ToString());
@@ -150,6 +154,7 @@ class Program
         
         foreach (var item in s.CurrentMonth.Keys)
         {
+            Console.WriteLine();
             Console.WriteLine($"Date: {item}");
             s.CurrentMonth[item].DisplayWorkingHours();
             Console.WriteLine(s.CurrentMonth[item].Date);

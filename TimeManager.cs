@@ -115,12 +115,14 @@ public class TimeManager
     {
         foreach (var hour in WorkingHours.Keys)
         {
-            Console.WriteLine($"{hour}: {WorkingHours[hour].Count}:");
+            Console.WriteLine($"Hour: {hour}: Workers: {WorkingHours[hour].Count}:");
             foreach (var worker in WorkingHours[hour])
             {
+                Console.WriteLine("-        -       -");
                 Console.WriteLine($"\t{worker.Name}");
                 Console.WriteLine($"\t{worker.WorkerId}");
             }
+            Console.WriteLine("-        -       -");
             Console.WriteLine();
         }
     }
@@ -129,12 +131,14 @@ public class TimeManager
     {
         foreach (var hour in WorkingHours.Keys)
         {
-            writer.WriteLine($"{hour}: {WorkingHours[hour].Count}:");
+            writer.WriteLine($"Hour: {hour}: Workers: {WorkingHours[hour].Count}:");
             foreach (var worker in WorkingHours[hour])
             {
+                writer.WriteLine("-        -       -");
                 writer.WriteLine($"\t{worker.Name}");
                 writer.WriteLine($"\t{worker.WorkerId}");
             }
+            writer.WriteLine("-        -       -");
             writer.WriteLine();
         }
     }

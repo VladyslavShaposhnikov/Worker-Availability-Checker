@@ -4,35 +4,6 @@ namespace practice;
 
 public static class ExcelHelpers
 {
-    public static void IsAvailableForAllDays(List<Worker> workers, int daysInMonth, int from, int to)
-    {
-        for (int i = 1; i <= daysInMonth; i++)
-        {
-            string date = $"4/{i}/2025";
-            Console.WriteLine($"Day: {date}");
-            IsAvailable(DateOnly.Parse(date), workers, from, to);
-            Console.WriteLine("--------------------------------------------------------");
-            
-        }
-    }
-    public static void IsAvailable(DateOnly date, List<Worker> workers, int from, int to)
-    {
-        foreach (var person in workers)
-        {
-            if (!person.Dyspo.ContainsKey(date))
-            {
-                continue;
-            }
-            int[] ava = person.Dyspo[date];
-            
-            int[] toCheck = Enumerable.Range(from, to - from).ToArray();
-
-            if (toCheck.All(x => ava.Contains(x)))
-            {
-                Console.WriteLine($"{person.Name} is available for {date}. All available hourse at this day: {string.Join(", ", person.Dyspo[date])}");
-            }
-        }
-    }
     public static int[] SaveToArray(int startRow, int column, int daysInMonth, ExcelWorksheet worksheet)
     {
         int[] from  = new int[daysInMonth];
@@ -61,12 +32,12 @@ public static class ExcelHelpers
         }
     }
     
-    public static void IsAvailableWithTimeManaget(DateOnly date, List<Worker> workers, int from, int to, TimeManager timeManager)
+    public static void IsAvailableWithTimeManaget(DateOnly date, List<Worker> workers, int from, int to, TimeManager timeManager) // add worker for certain day
     {
         foreach (var person in workers)
         {
             timeManager.Date = date;
-            if (!person.Dyspo.ContainsKey(date))
+            if (!person.Dyspo.ContainsKey(date) || person.CanWorkToday(date) == false)
             {
                 continue;
             }
@@ -85,19 +56,6 @@ public static class ExcelHelpers
                     }
                 }
             }
-        }
-    }
-    
-    public static void IsAvailableForAllDaysWithTimeManager(List<Worker> workers, int daysInMonth, int from, int to, Schedule schedule)
-    {
-        
-        for (int i = 1; i <= daysInMonth; i++)
-        {
-            string date = $"4/{i}/2025";
-            TimeManager tm = schedule.CurrentMonth[DateOnly.Parse(date)];
-            Console.WriteLine($"Day: {date}");
-            IsAvailableWithTimeManaget(DateOnly.Parse(date), workers, from, to, tm);
-            Console.WriteLine("--------------------------------------------------------");
         }
     }
     
@@ -129,6 +87,11 @@ public static class ExcelHelpers
             }
         }
 
+        AddWorkersFromTemporaryDictionary(tempDict, date, timeManager);
+    }
+
+    private static void AddWorkersFromTemporaryDictionary(Dictionary<int, List<Worker>> tempDict, DateOnly date, TimeManager timeManager)
+    {
         foreach (var key in tempDict.Keys)
         {
             List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).OrderBy(x => x.GetHoursForPrevDay(date)).ToList();
