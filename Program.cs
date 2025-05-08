@@ -9,45 +9,45 @@ class Program
         vladyslav.Name = "Vladyslav";
         vladyslav.WorkerId = 701352;
         vladyslav.StartColumn = 5;
-        vladyslav.Dyspo = new Dictionary<DateOnly, int[]>();
+        vladyslav.Availability = new Dictionary<DateOnly, int[]>();
         
         Worker me = new Worker();
         me.Name = "Me";
         me.WorkerId = 701253;
         me.StartColumn = 9;
-        me.Dyspo = new Dictionary<DateOnly, int[]>();
+        me.Availability = new Dictionary<DateOnly, int[]>();
         
         Worker vlad = new Worker();
         vlad.Name = "Vlad";
         vlad.WorkerId = 701354;
         vlad.StartColumn = 13;
-        vlad.Dyspo = new Dictionary<DateOnly, int[]>();
+        vlad.Availability = new Dictionary<DateOnly, int[]>();
         
         Worker wladek = new Worker();
         wladek.Name = "Wladek";
         wladek.WorkerId = 701355;
         wladek.StartColumn = 17;
-        wladek.Dyspo = new Dictionary<DateOnly, int[]>();
+        wladek.Availability = new Dictionary<DateOnly, int[]>();
         
         Worker shaposhnikov = new Worker();
         shaposhnikov.Name = "Shaposhnikov";
         shaposhnikov.WorkerId = 701256;
         shaposhnikov.StartColumn = 21;
-        shaposhnikov.Dyspo = new Dictionary<DateOnly, int[]>();
+        shaposhnikov.Availability = new Dictionary<DateOnly, int[]>();
         
         Worker shapik = new Worker();
         shapik.Name = "Shapik";
         shapik.WorkerId = 701257;
         shapik.StartColumn = 25;
-        shapik.Dyspo = new Dictionary<DateOnly, int[]>();
+        shapik.Availability = new Dictionary<DateOnly, int[]>();
         
-        Worker vm1 = new Worker(){Name = "Vm1", Priority = 2, WorkerId = 701258, StartColumn = 29, Dyspo = new Dictionary<DateOnly, int[]>()};
+        Worker vm1 = new Worker(){Name = "Vm1", Priority = 2, WorkerId = 701258, StartColumn = 29, Availability = new Dictionary<DateOnly, int[]>()};
         
-        Worker vm2 = new Worker(){Name = "Vm2",Priority = 2, WorkerId = 701259, StartColumn = 33, Dyspo = new Dictionary<DateOnly, int[]>()};
+        Worker vm2 = new Worker(){Name = "Vm2",Priority = 2, WorkerId = 701259, StartColumn = 33, Availability = new Dictionary<DateOnly, int[]>()};
         
-        Worker manager1 = new Worker(){Name = "Manager1",Priority = 1, WorkerId = 701260, StartColumn = 37, Dyspo = new Dictionary<DateOnly, int[]>()};
+        Worker manager1 = new Worker(){Name = "Manager1",Priority = 1, WorkerId = 701260, StartColumn = 37, Availability = new Dictionary<DateOnly, int[]>()};
         
-        Worker manager2 = new Worker(){Name = "Manager2",Priority = 1, WorkerId = 701261, StartColumn = 41, Dyspo = new Dictionary<DateOnly, int[]>()};
+        Worker manager2 = new Worker(){Name = "Manager2",Priority = 1, WorkerId = 701261, StartColumn = 41, Availability = new Dictionary<DateOnly, int[]>()};
         
         List<Worker> allWorkers = new List<Worker>(){me, wladek, shaposhnikov, shapik, vladyslav, vlad, vm1, vm2, manager1, manager2};
         
@@ -82,18 +82,6 @@ class Program
 
             ExcelHelpers.ParseAvailability(allWorkers, worksheet, dim, m);
         }
-        
-        //ExcelHelpers.IsAvailable(DateOnly.Parse("4/12/2025"), workers, 9, 16);
-
-        //ExcelHelpers.IsAvailableForAllDays(workers, 30, 9, 16);
-        
-        //ExcelHelpers.IsAvailableForAllDays(allWorkers, 30, 9, 16);
-        
-        // TimeManager tm = new TimeManager(9, 22);
-        //
-        // ExcelHelpers.IsAvailableWithTimeManaget(DateOnly.Parse("4/12/2025"), workers, 9, 16, tm);
-        // Console.WriteLine("---------------------------------------------------");
-        // tm.DisplayWorkingHours();
 
         Schedule s = new Schedule(dim, m);
 
@@ -101,31 +89,28 @@ class Program
         {
             if (key.DayOfWeek.ToString() == "Monday" || key.DayOfWeek.ToString() == "Thursday")
             {
-                ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 6, 14, s.CurrentMonth[key]);
+                ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 6, 14, s.CurrentMonth[key]);
             }
             else
             {
-                ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 9, 15, s.CurrentMonth[key]);
+                ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 9, 15, s.CurrentMonth[key]);
             }
             if (key.DayOfWeek.ToString() == "Monday" || key.DayOfWeek.ToString() == "Thursday")
             {
-                ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 14, 22, s.CurrentMonth[key]);
+                ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 14, 22, s.CurrentMonth[key]);
             }
             else
             {
-                ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 15, 22, s.CurrentMonth[key]);
-                // ExcelHelpers.IsAvailableWithTimeManagetAndTempDict(key, allWorkers, 15, 21, s.CurrentMonth[key]); to set workers who can work until 21:00
+                ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 15, 22, s.CurrentMonth[key]);
+                // ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 15, 21, s.CurrentMonth[key]); to set workers who can work until 21:00 but each monday and thurday
             }
         }
         
-        ExcelHelpers.IsAvailableWithTimeManaget(DateOnly.Parse("06/01/2025"), allWorkers, 15, 21, s.CurrentMonth[DateOnly.Parse("06/01/2025")]);
-        
-        // ExcelHelpers.IsAvailableForAllDaysWithTimeManager(allWorkers, 30, 9, 15, s);
-        // ExcelHelpers.IsAvailableForAllDaysWithTimeManager(allWorkers, 30, 15, 22, s);
+        ExcelHelpers.IsAvailableWithTimeManager(DateOnly.Parse("06/01/2025"), allWorkers, 15, 21, s.CurrentMonth[DateOnly.Parse("06/01/2025")]); // set available worker from 15 to 21 on 06/01/2025
 
         using (StreamWriter writer = new StreamWriter("output.txt"))
         {
-            writer.WriteLine("----------------------------------------------------Plan---------------------------------------------------------------");
+            writer.WriteLine("-----------------------------------Plan---------------------------------------------");
 
             foreach (var item in s.CurrentMonth.Keys)
             {
@@ -137,14 +122,14 @@ class Program
                 writer.WriteLine("---------------------------------------");
             }
             
-            writer.WriteLine("----------------------------------------------------Hour Total For Each Worker---------------------------------------------------------------");
+            writer.WriteLine("------------------------------Hour Total For Each Worker-----------------------------------------");
             
             foreach (var worker in allWorkers)
             {
                 writer.WriteLine($"Name: {worker.Name}, {worker.WorkerId}, Working hours at this month: {worker.HoursAtMonth.Values.Sum()}");
             }
             
-            writer.WriteLine("-----------------------------------------------GetNotSetHours--------------------------------------------------------------------");
+            writer.WriteLine("--------------------------------GetNotSetHours--------------------------------------");
             
             foreach (var item in s.CurrentMonth.Keys)
             {
@@ -166,10 +151,5 @@ class Program
         {
             Console.WriteLine($"Name: {worker.Name}, {worker.WorkerId}, Working hours at this month: {worker.HoursAtMonth.Values.Sum()}");
         }
-        
-        // foreach (var item in s.CurrentMonth.Keys)
-        // {
-        //     s.CurrentMonth[item].GetNotSetHours();
-        // }
     }
 }

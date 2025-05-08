@@ -10,7 +10,7 @@ public class Worker
     public Dictionary<DateOnly, int> HoursAtMonth { get; set; } = new();
     public List<DateOnly> WorkDay { get; set; } = new();
     
-    public Dictionary<DateOnly, int[]> Dyspo { get; set; } = new();
+    public Dictionary<DateOnly, int[]> Availability { get; set; } = new();
 
     public bool CanWorkToday(DateOnly date) // return false in case worker cant work this day because already has shift today
     {
@@ -46,9 +46,9 @@ public class Worker
     public void ShowAvailability()
     {
         Console.WriteLine($"{Name} with id {WorkerId} is available at this hours:");
-        foreach (var key in Dyspo.Keys)
+        foreach (var key in Availability.Keys)
         {
-            Console.WriteLine($"{key}: {string.Join(", ", Dyspo[key])}");
+            Console.WriteLine($"{key}: {string.Join(", ", Availability[key])}");
         }
     }
 }

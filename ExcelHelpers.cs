@@ -21,33 +21,33 @@ public static class ExcelHelpers
         {
             int[] from = SaveToArray(worker.StartRow, worker.StartColumn, daysInMonth, worksheet);
             
-            int[] untill = SaveToArray(worker.StartRow, worker.StartColumn + 2, daysInMonth, worksheet);
+            int[] until = SaveToArray(worker.StartRow, worker.StartColumn + 2, daysInMonth, worksheet);
             
             for (int i = 0; i < daysInMonth; i++)
             {
                 string day = $"{month}/{i + 1}/2025";
-                int[] res = Enumerable.Range(from[i], untill[i]).ToArray();
-                worker.Dyspo[DateOnly.Parse(day)] = res;
+                int[] res = Enumerable.Range(from[i], until[i]).ToArray();
+                worker.Availability[DateOnly.Parse(day)] = res;
             }
         }
     }
     
-    public static void IsAvailableWithTimeManaget(DateOnly date, List<Worker> workers, int from, int to, TimeManager timeManager) // add worker for certain day
+    public static void IsAvailableWithTimeManager(DateOnly date, List<Worker> workers, int from, int to, TimeManager timeManager) // add worker for certain day
     {
         foreach (var person in workers)
         {
             timeManager.Date = date;
-            if (!person.Dyspo.ContainsKey(date) || person.CanWorkToday(date) == false)
+            if (!person.Availability.ContainsKey(date) || person.CanWorkToday(date) == false)
             {
                 continue;
             }
-            int[] ava = person.Dyspo[date];
+            int[] ava = person.Availability[date];
             
             int[] toCheck = Enumerable.Range(from, to - from).ToArray();
 
             if (toCheck.All(x => ava.Contains(x)))
             {
-                Console.WriteLine($"{person.Name} is available for {date}. All available hourse at this day: {string.Join(", ", person.Dyspo[date])}");
+                Console.WriteLine($"{person.Name} is available for {date}. All available hours at this day: {string.Join(", ", person.Availability[date])}");
                 foreach (var i in toCheck)
                 {
                     if (!timeManager.IsPropertLenght(i))
@@ -59,23 +59,23 @@ public static class ExcelHelpers
         }
     }
     
-    public static void IsAvailableWithTimeManagetAndTempDict(DateOnly date, List<Worker> workers, int from, int to, TimeManager timeManager)
+    public static void IsAvailableWithTimeManagerAndTempDict(DateOnly date, List<Worker> workers, int from, int to, TimeManager timeManager)
     {
         Dictionary<int, List<Worker>> tempDict = new Dictionary<int, List<Worker>>();
         foreach (var person in workers)
         {
             timeManager.Date = date;
-            if (!person.Dyspo.ContainsKey(date) || person.CanWorkToday(date) == false)
+            if (!person.Availability.ContainsKey(date) || person.CanWorkToday(date) == false)
             {
                 continue;
             }
-            int[] ava = person.Dyspo[date];
+            int[] ava = person.Availability[date];
             
             int[] toCheck = Enumerable.Range(from, to - from).ToArray();
             
             if (toCheck.All(x => ava.Contains(x)))
             {
-                Console.WriteLine($"{person.Name} is available for {date}. All available hourse at this day: {string.Join(", ", person.Dyspo[date])}");
+                Console.WriteLine($"{person.Name} is available for {date}. All available hours at this day: {string.Join(", ", person.Availability[date])}");
                 foreach (var i in toCheck)
                 {
                     if (!tempDict.ContainsKey(i))
