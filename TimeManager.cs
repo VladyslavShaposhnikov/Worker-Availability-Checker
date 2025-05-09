@@ -23,7 +23,7 @@ public class TimeManager
     public void AddWorker(Worker worker, int hour, DateOnly date)
     {
         WorkingHours[hour].Add(worker);
-        worker.MarkAsWorkDay(date); // not nessesory to change it every hour
+        worker.MarkAsWorkDay(date); // not necessary to change it every hour
         if (!worker.HoursAtMonth.ContainsKey(date))
         {
             worker.HoursAtMonth.Add(date, 1);
@@ -121,6 +121,7 @@ public class TimeManager
     
     public void GetNotSetHours()
     {
+        int ttl = 0;
         foreach (var hour in WorkingHours.Keys)
         {
             if (WorkingHours[hour].Count != RequiredWorkers[hour])
@@ -128,13 +129,15 @@ public class TimeManager
                 Console.WriteLine($"{Date}, {Date.DayOfWeek}, Hour: {hour}");
                 Console.WriteLine($"Workers: {WorkingHours[hour].Count}. Required workers count {RequiredWorkers[hour]}");
                 Console.WriteLine("--------------------------------------------------------------------------------------");
+                ttl++;
             }
-
         }
+        Console.WriteLine($"Total hours: {ttl}");
     }
     
-    public void GetNotSetHoursToFile(StreamWriter writer)
+    public int GetNotSetHoursToFile(StreamWriter writer)
     {
+        int ttl = 0;
         foreach (var hour in WorkingHours.Keys)
         {
             if (WorkingHours[hour].Count != RequiredWorkers[hour])
@@ -142,8 +145,10 @@ public class TimeManager
                 writer.WriteLine($"{Date}, {Date.DayOfWeek}, Hour: {hour}");
                 writer.WriteLine($"Workers: {WorkingHours[hour].Count}. Required workers count {RequiredWorkers[hour]}");
                 writer.WriteLine("--------------------------------------------------------------------------------------");
+                ttl++;
             }
-
         }
+        writer.WriteLine($"Total hours: {ttl}");
+        return ttl;
     }
 }

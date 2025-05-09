@@ -93,24 +93,25 @@ class Program
             // required workers is set to 3, it will find 4 workers from 9 to 11 (if they are available)
             if (key.DayOfWeek.ToString() == "Monday" || key.DayOfWeek.ToString() == "Thursday")
             {
-                ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 6, 14, s.CurrentMonth[key]);
+                SetWorkersIntoSchedule.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 6, 14, s.CurrentMonth[key]);
             }
             else
             {
-                ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 9, 15, s.CurrentMonth[key]);
+                SetWorkersIntoSchedule.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 9, 15, s.CurrentMonth[key]);
             }
             if (key.DayOfWeek.ToString() == "Monday" || key.DayOfWeek.ToString() == "Thursday")
             {
-                ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 14, 22, s.CurrentMonth[key]);
+                SetWorkersIntoSchedule.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 14, 22, s.CurrentMonth[key]);
             }
             else
             {
-                ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 15, 22, s.CurrentMonth[key]);
-                // ExcelHelpers.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 15, 21, s.CurrentMonth[key]); to set workers who can work until 21:00 but each monday and thurday
+                SetWorkersIntoSchedule.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 15, 22, s.CurrentMonth[key]);
+                
+                // SetWorkersIntoSchedule.IsAvailableWithTimeManagerAndTempDict(key, allWorkers, 15, 21, s.CurrentMonth[key]); to set workers who can work until 21:00 but each monday and thurday
             }
         }
         
-        ExcelHelpers.IsAvailableWithTimeManager(DateOnly.Parse("06/01/2025"), allWorkers, 15, 21, s.CurrentMonth[DateOnly.Parse("06/01/2025")]); // set available worker from 15 to 21 on 06/01/2025
+        SetWorkersIntoSchedule.IsAvailableWithTimeManager(DateOnly.Parse("06/01/2025"), allWorkers, 15, 21, s.CurrentMonth[DateOnly.Parse("06/01/2025")]); // set available worker from 15 to 21 on 06/01/2025
 
         using (StreamWriter writer = new StreamWriter("output.txt"))
         {
@@ -127,18 +128,24 @@ class Program
             }
             
             writer.WriteLine("------------------------------Hour Total For Each Worker-----------------------------------------");
-            
+
+            int workedHoursMonth = 0;
             foreach (var worker in allWorkers)
             {
                 writer.WriteLine($"Name: {worker.Name}, {worker.WorkerId}, Working hours at this month: {worker.HoursAtMonth.Values.Sum()}");
+                workedHoursMonth += worker.HoursAtMonth.Values.Sum();
             }
+            writer.WriteLine($"Total hours for this month: {workedHoursMonth}");
             
             writer.WriteLine("--------------------------------GetNotSetHours--------------------------------------");
-            
+
+            int ttl = 0;
             foreach (var item in s.CurrentMonth.Keys)
             {
-                s.CurrentMonth[item].GetNotSetHoursToFile(writer);
+                ttl += s.CurrentMonth[item].GetNotSetHoursToFile(writer);
             }
+
+            writer.WriteLine(ttl + " not assigned hours in total");
         }
         
         foreach (var item in s.CurrentMonth.Keys)
@@ -151,9 +158,13 @@ class Program
             Console.WriteLine("---------------------------------------");
         }
 
+        int ttlH = 0;
         foreach (var worker in allWorkers)
         {
+            ttlH += worker.HoursAtMonth.Values.Sum();
             Console.WriteLine($"Name: {worker.Name}, {worker.WorkerId}, Working hours at this month: {worker.HoursAtMonth.Values.Sum()}");
         }
+
+        Console.WriteLine($"Total hours for this month: {ttlH}");
     }
 }
