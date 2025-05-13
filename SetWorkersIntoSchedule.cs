@@ -11,13 +11,13 @@ public static class SetWorkersIntoSchedule
             {
                 continue;
             }
-            int[] ava = person.Availability[date];
+            int[] availability = person.Availability[date];
             
             int[] toCheck = Enumerable.Range(from, to - from).ToArray();
 
-            if (toCheck.All(x => ava.Contains(x)))
+            if (toCheck.All(x => availability.Contains(x)))
             {
-                Console.WriteLine($"{person.Name} is available for {date}. All available hours at this day: {string.Join(", ", person.Availability[date])}");
+                //Console.WriteLine($"{person.Name} is available for {date}. All available hours at this day: {string.Join(", ", person.Availability[date])}");
                 foreach (var i in toCheck)
                 {
                     if (!timeManager.IsPropertLenght(i))
@@ -35,17 +35,17 @@ public static class SetWorkersIntoSchedule
         foreach (var person in workers)
         {
             timeManager.Date = date;
-            if (!person.Availability.ContainsKey(date) || person.CanWorkToday(date) == false)
+            if (!person.Availability.ContainsKey(date) || person.CanWorkToday(date) == false || person.GetHoursForPrevDay(date) >= ExcelHelpers.workingHours * person.FullPartTime)
             {
                 continue;
             }
-            int[] ava = person.Availability[date];
+            int[] availability = person.Availability[date];
             
             int[] toCheck = Enumerable.Range(from, to - from).ToArray();
             
-            if (toCheck.All(x => ava.Contains(x)))
+            if (toCheck.All(x => availability.Contains(x)))
             {
-                Console.WriteLine($"{person.Name} is available for {date}. All available hours at this day: {string.Join(", ", person.Availability[date])}");
+                //Console.WriteLine($"{person.Name} is available for {date}. All available hours at this day: {string.Join(", ", person.Availability[date])}");
                 foreach (var i in toCheck)
                 {
                     if (!tempDict.ContainsKey(i))
@@ -64,9 +64,22 @@ public static class SetWorkersIntoSchedule
     {
         foreach (var key in tempDict.Keys)
         {
-            List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).OrderBy(x => x.GetHoursForPrevDay(date)).ToList();
-            List<Worker> prior2 = tempDict[key].Where(x => x.Priority == 2).OrderBy(x => x.GetHoursForPrevDay(date)).ToList();
-            List<Worker> prior3 = tempDict[key].Where(x => x.Priority == 3).OrderBy(x => x.GetHoursForPrevDay(date)).ToList(); 
+            // List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).OrderBy(x => x.GetHoursForPrevDay(date)).ToList();
+            // List<Worker> prior2 = tempDict[key].Where(x => x.Priority == 2).OrderBy(x => x.GetHoursForPrevDay(date)).ToList();
+            // List<Worker> prior3 = tempDict[key].Where(x => x.Priority == 3).OrderBy(x => x.GetHoursForPrevDay(date)).ToList(); 
+            
+            List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).OrderBy(x => x.GetDependency(date)).ToList();
+            List<Worker> prior2 = tempDict[key].Where(x => x.Priority == 2).OrderBy(x => x.GetDependency(date)).ToList();
+            List<Worker> prior3 = tempDict[key].Where(x => x.Priority == 3).OrderBy(x => x.GetDependency(date)).ToList();
+
+            Console.WriteLine("prior3" + " hour: " + key + " date: " + date);
+            foreach (var item in prior3)
+            {
+                Console.WriteLine(string.Join(", ", item.Name, item.GetDependency(date)));
+            }
+
+            Console.WriteLine("--------------------------------------------------------");
+            
             
             if (prior1.Count != 0)
             {

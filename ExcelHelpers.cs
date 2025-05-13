@@ -4,6 +4,7 @@ namespace practice;
 
 public static class ExcelHelpers
 {
+    public static int workingHours;
     public static int[] SaveToArray(int startRow, int column, int daysInMonth, ExcelWorksheet worksheet)
     {
         int[] from  = new int[daysInMonth];

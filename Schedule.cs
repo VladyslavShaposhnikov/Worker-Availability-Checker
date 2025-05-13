@@ -7,6 +7,10 @@ public class Schedule
         for (int i = 1; i <= daysInMonth; i++)
         {
             DateOnly onlyDate = DateOnly.Parse($"{month}/{i}/2025");
+            if (onlyDate.DayOfWeek == DayOfWeek.Sunday)
+            {
+                continue;
+            }
             if (onlyDate.DayOfWeek == DayOfWeek.Monday || onlyDate.DayOfWeek == DayOfWeek.Thursday)
             {
                 CurrentMonth.Add(onlyDate, new TimeManager(onlyDate, 6, 22));

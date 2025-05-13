@@ -60,12 +60,12 @@ public class TimeManager
         {
             if (WorkingHours[hour].Count == RequiredWorkers[hour])
             {
-                Console.WriteLine("All workers are set up for this hour");
+                //Console.WriteLine("All workers are set up for this hour");
                 return true;
             }
             else
             {
-                Console.WriteLine($"Workers count {WorkingHours[hour].Count} but required workers count {RequiredWorkers[hour]}");
+                //Console.WriteLine($"Workers count {WorkingHours[hour].Count} but required workers count {RequiredWorkers[hour]}");
                 return false;
             }
         }

@@ -9,6 +9,7 @@ public class Worker
     public int Priority { get; set; } = 3;
     public Dictionary<DateOnly, int> HoursAtMonth { get; set; } = new();
     public List<DateOnly> WorkDay { get; set; } = new();
+    public float FullPartTime { get; set; }
     
     public Dictionary<DateOnly, int[]> Availability { get; set; } = new();
 
@@ -41,6 +42,14 @@ public class Worker
             }
         }
         return ttl;
+    }
+    
+    public float GetDependency(DateOnly currentDate) // dependency worked hours to full or part day
+    {
+        int ttl = GetHoursForPrevDay(currentDate);
+        
+        float res = (ttl / (ExcelHelpers.workingHours * FullPartTime)) * 100;
+        return  res;
     }
     
     public void ShowAvailability()
