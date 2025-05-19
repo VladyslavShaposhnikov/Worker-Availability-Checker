@@ -62,12 +62,12 @@ public static class SetWorkersIntoSchedule
 
     private static void AddWorkersFromTemporaryDictionary(Dictionary<int, List<Worker>> tempDict, DateOnly date, TimeManager timeManager)
     {
+        // if (tempDict.Count < 3)
+        // {
+        //     //todo
+        // }
         foreach (var key in tempDict.Keys)
         {
-            // List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).OrderBy(x => x.GetHoursForPrevDay(date)).ToList();
-            // List<Worker> prior2 = tempDict[key].Where(x => x.Priority == 2).OrderBy(x => x.GetHoursForPrevDay(date)).ToList();
-            // List<Worker> prior3 = tempDict[key].Where(x => x.Priority == 3).OrderBy(x => x.GetHoursForPrevDay(date)).ToList(); 
-            
             List<Worker> prior1 = tempDict[key].Where(x => x.Priority == 1).OrderBy(x => x.GetDependency(date)).ToList();
             List<Worker> prior2 = tempDict[key].Where(x => x.Priority == 2).OrderBy(x => x.GetDependency(date)).ToList();
             List<Worker> prior3 = tempDict[key].Where(x => x.Priority == 3).OrderBy(x => x.GetDependency(date)).ToList();

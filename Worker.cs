@@ -41,6 +41,8 @@ public class Worker
                 ttl += HoursAtMonth[DateOnly.Parse($"{currentDate.Month}/{i}/{currentDate.Year}")];
             }
         }
+
+        Console.WriteLine($"hours at {currentDate.Month}/{currentDate.Day}: {ttl}");
         return ttl;
     }
     

@@ -27,26 +27,46 @@ public class TimeManager
         if (!worker.HoursAtMonth.ContainsKey(date))
         {
             worker.HoursAtMonth.Add(date, 1);
+            return;
         }
         worker.HoursAtMonth[date]++;
     }
     
     private void SetDefaultRequiredWorkers(DayOfWeek dayOfWeek, int from, int to)
     {
+        // for (int i = from; i < to; i++)
+        // {
+        //     RequiredWorkers.Add(i, 3);
+        //     if (dayOfWeek == DayOfWeek.Monday || dayOfWeek == DayOfWeek.Thursday)
+        //     {
+        //         if (new int[] { 6, 7, 8, 9, 10, 11, 12, 13 }.Contains(i))
+        //         {
+        //             RequiredWorkers[i] += 1;
+        //             continue;
+        //         }
+        //     }
+        //     if (dayOfWeek == DayOfWeek.Friday || dayOfWeek == DayOfWeek.Saturday)
+        //     {
+        //         if (new int[] { 12, 13, 14, 15, 16, 17, 18, 19 }.Contains(i))
+        //         {
+        //             RequiredWorkers[i] += 1;
+        //         }
+        //     }
+        // }
+        
         for (int i = from; i < to; i++)
         {
             RequiredWorkers.Add(i, 3);
             if (dayOfWeek == DayOfWeek.Monday || dayOfWeek == DayOfWeek.Thursday)
             {
-                if (new int[] { 6, 7, 8, 9, 10, 11, 12, 13 }.Contains(i))
+                if (i <= 19)
                 {
                     RequiredWorkers[i] += 1;
-                    continue;
                 }
             }
-            if (dayOfWeek == DayOfWeek.Friday || dayOfWeek == DayOfWeek.Saturday)
+            else
             {
-                if (new int[] { 12, 13, 14, 15, 16, 17, 18, 19 }.Contains(i))
+                if (i >= 10 && i <= 19)
                 {
                     RequiredWorkers[i] += 1;
                 }
@@ -119,6 +139,20 @@ public class TimeManager
         }
     }
     
+    public void DisplayWorkingHoursV2ToFile(StreamWriter writer)
+    {
+        foreach (var hour in WorkingHours.Keys)
+        {
+            writer.WriteLine($"Hour: {hour}:00-{hour+1}:00; Workers: {WorkingHours[hour].Count}:\t {string.Join("; ", WorkingHours[hour].Select(x => $"{x.Name} - {x.WorkerId}"))}");
+        }
+        writer.WriteLine();
+    }
+
+    public int GetAllRequiredHoursSum()
+    {
+        return RequiredWorkers.Values.Sum();
+    }
+    
     public void GetNotSetHours()
     {
         int ttl = 0;
@@ -129,7 +163,7 @@ public class TimeManager
                 Console.WriteLine($"{Date}, {Date.DayOfWeek}, Hour: {hour}");
                 Console.WriteLine($"Workers: {WorkingHours[hour].Count}. Required workers count {RequiredWorkers[hour]}");
                 Console.WriteLine("--------------------------------------------------------------------------------------");
-                ttl++;
+                ttl += RequiredWorkers[hour] - WorkingHours[hour].Count;;
             }
         }
         Console.WriteLine($"Total hours: {ttl}");
@@ -142,13 +176,16 @@ public class TimeManager
         {
             if (WorkingHours[hour].Count != RequiredWorkers[hour])
             {
-                writer.WriteLine($"{Date}, {Date.DayOfWeek}, Hour: {hour}");
-                writer.WriteLine($"Workers: {WorkingHours[hour].Count}. Required workers count {RequiredWorkers[hour]}");
-                writer.WriteLine("--------------------------------------------------------------------------------------");
-                ttl++;
+                writer.WriteLine($"{Date}, {Date.DayOfWeek}, Hour: {hour}; Workers: {WorkingHours[hour].Count}. Required workers count {RequiredWorkers[hour]}");
+                ttl += RequiredWorkers[hour] - WorkingHours[hour].Count;
             }
         }
-        writer.WriteLine($"Total hours: {ttl}");
+
+        if (ttl != 0)
+        {
+            writer.WriteLine($"Total hours: {ttl}");
+            writer.WriteLine();
+        }
         return ttl;
     }
 }

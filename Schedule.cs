@@ -22,4 +22,15 @@ public class Schedule
         }
     }
     public Dictionary<DateOnly, TimeManager> CurrentMonth { get; set; } = new();
+
+    public void GetAllPlannedHours()
+    {
+        int res = 0;
+        foreach (var key in CurrentMonth.Keys)
+        {
+            res += CurrentMonth[key].GetAllRequiredHoursSum();
+        }
+
+        Console.WriteLine($"Total hours: {res}");
+    }
 }
